@@ -31,7 +31,7 @@ const AdminAdsPost = () => {
     data.append('image', imageFile);
 
     try {
-      const res = await fetch('http://localhost:5000/api/ads', {
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/ads', {
         method: 'POST',
         body: data,
       });
