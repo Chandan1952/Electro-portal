@@ -6,7 +6,7 @@ const Ads = () => {
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/ads');
+        const res = await fetch('https://electro-portal-backend.onrender.com/api/ads');
         const data = await res.json();
         setAdsData(data);
       } catch (err) {
@@ -41,7 +41,7 @@ const Ads = () => {
           }}
         >
           <img
-            src={`http://localhost:5000${ad.img}`}
+            src={`https://electro-portal-backend.onrender.com${ad.img}`}
             alt={`Banner ${index + 1}`}
             onError={(e) => (e.target.src = 'https://via.placeholder.com/100')}
             style={{ width: '100px', height: 'auto', marginRight: '15px' }}
