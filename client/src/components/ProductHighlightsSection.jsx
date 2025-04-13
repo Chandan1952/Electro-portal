@@ -21,7 +21,7 @@ const ProductList = ({ title, items }) => (
       >
         {item.img && (
           <img
-src={`http://localhost:5000/${item.img}`}
+src={`https://electro-portal-backend.onrender.com/${item.img}`}
             alt={item.name}
             style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }}
           />
@@ -94,7 +94,7 @@ const ElectroHome = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/products');
+        const response = await fetch('https://electro-portal-backend.onrender.com/products');
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
