@@ -6,7 +6,7 @@ import ProductHighlightsSection from './ProductHighlightsSection';
 import ElectroFooterPage from './ElectroFooterPage';
 
 const AuthPage = () => {
-  const navigate = useNavigate(); // 👈 Navigation hook
+  const navigate = useNavigate();
 
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [registerData, setRegisterData] = useState({ username: '', email: '', password: '' });
@@ -17,13 +17,16 @@ const AuthPage = () => {
       const res = await fetch('https://electro-portal-backend.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(loginData),
       });
       const result = await res.json();
       if (res.ok) {
+        // ✅ Save userId to localStorage
+        localStorage.setItem('userId', result.userId);
         alert('Login successful!');
         navigate('/');
-        setTimeout(() => window.location.reload(), 100); // 🔁 Reload to refresh header
+        setTimeout(() => window.location.reload(), 100);
       } else {
         alert(result.message || 'Login failed.');
       }
@@ -39,12 +42,16 @@ const AuthPage = () => {
       const res = await fetch('https://electro-portal-backend.onrender.com/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(registerData),
       });
       const result = await res.json();
       if (res.ok) {
+        // ✅ Save userId to localStorage
+        localStorage.setItem('userId', result.userId);
         alert('Registration successful!');
-        navigate('/'); // 👈 Redirect to home
+        navigate('/');
+        setTimeout(() => window.location.reload(), 100);
       } else {
         alert(result.message || 'Registration failed.');
       }
@@ -115,7 +122,6 @@ const AuthPage = () => {
       marginTop: "10px",
     },
   };
-
 
   return (
     <>
