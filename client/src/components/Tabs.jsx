@@ -14,7 +14,7 @@ const Tabs = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/products');
+        const res = await fetch('https://electro-portal-backend.onrender.com/api/products');
         const data = await res.json();
 
         // Group by category
