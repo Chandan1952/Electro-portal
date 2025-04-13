@@ -14,7 +14,7 @@ const app = express();
 // ✅ CORS Setup
 app.use(
   cors({
-    origin: "https://car-rental-portal-client.onrender.com",
+    origin: "https://electro-portal-client.onrender.com",
     credentials: true,
   })
 );
