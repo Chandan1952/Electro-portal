@@ -23,7 +23,7 @@ const AdminProductList = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/products');
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/products');
       const data = await res.json();
       console.log('Fetched products:', data); // Debug
       setProducts(data);
@@ -37,7 +37,7 @@ const AdminProductList = () => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${id}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/api/products/${id}`, {
         method: 'DELETE',
       });
 
@@ -68,7 +68,7 @@ const AdminProductList = () => {
     if (editImage) formData.append('image', editImage);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${editProduct._id}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/api/products/${editProduct._id}`, {
         method: 'PUT',
         body: formData,
       });
@@ -142,7 +142,7 @@ const AdminProductList = () => {
                 <tr key={product._id}>
                   <td>
                     <img
-                      src={`http://localhost:5000/${product.imageUrl}`}
+                      src={`https://electro-portal-backend.onrender.com/${product.imageUrl}`}
                       alt={product.title}
                       style={styles.image}
                       onError={(e) => (e.target.src = 'https://via.placeholder.com/60')}
