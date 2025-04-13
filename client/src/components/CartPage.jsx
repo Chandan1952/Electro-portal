@@ -14,7 +14,7 @@ const CartPage = () => {
 
   const fetchCart = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/cart', {
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/cart', {
         credentials: 'include',
       });
       const data = await res.json();
@@ -39,7 +39,7 @@ const CartPage = () => {
 
   const handleUpdateCart = async () => {
     try {
-      await fetch('http://localhost:5000/api/cart/update', {
+      await fetch('https://electro-portal-backend.onrender.com/api/cart/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const CartPage = () => {
             <div key={item.product._id} style={styles.cartItem}>
               <div style={styles.productInfo}>
                 <img
-                  src={`http://localhost:5000/${item.product.imageUrl || item.product.img}`}
+                  src={`https://electro-portal-backend.onrender.com/${item.product.imageUrl || item.product.img}`}
                   alt={item.product.title}
                   style={styles.image}
                 />
