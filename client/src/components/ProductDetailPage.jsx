@@ -12,16 +12,22 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(false); // Add loading state
+  const [error, setError] = useState(null); // Add error state
   const location = useLocation();
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`https://electro-portal-backend.onrender.com/api/products/${id}`);
+        setLoading(true); // Set loading to true when fetching the product
+        const res = await fetch(`http://localhost:5000/api/products/${id}`);
         const data = await res.json();
         setProduct(data);
+        setLoading(false); // Set loading to false when data is fetched
       } catch (err) {
         console.error('Failed to fetch product', err);
+        setLoading(false);
+        setError('Failed to load product details');
       }
     };
     fetchProduct();
@@ -29,31 +35,46 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = async () => {
     try {
+      setLoading(true);
+  
+      const userId = localStorage.getItem('userId'); // ✅ Get userId from localStorage
+      const productId = product._id;
+  
+      if (!userId) {
+        alert('Please log in to add items to your cart.');
+        setLoading(false);
+        return;
+      }
+  
       const res = await fetch('https://electro-portal-backend.onrender.com/api/cart/add', {
         method: 'POST',
-        credentials: 'include',
+        credentials: 'include', // Only needed if you're using cookies for auth
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          productId: product._id,
-          quantity: quantity,
-        }),
+        body: JSON.stringify({ userId, productId, quantity }),
       });
-
+  
       const data = await res.json();
+      setLoading(false);
+  
       if (res.ok) {
         alert(`Added ${quantity} item(s) to cart!`);
       } else {
-        alert(data.error || 'Failed to add to cart');
+        alert(data.message || 'Failed to add to cart');
       }
     } catch (err) {
+      setLoading(false);
       console.error('Error adding to cart:', err);
       alert('Something went wrong while adding to cart');
     }
   };
+  
 
-  if (!product) return <p>Loading product details...</p>;
+  if (loading) return <p>Loading product details...</p>;
+  if (error) return <p>{error}</p>;
+
+  if (!product) return <p>Product not found</p>;
 
   return (
     <div>
@@ -125,18 +146,18 @@ const ProductDetailPage = () => {
               {/* Add to Cart Button */}
               <button
                 onClick={handleAddToCart}
-                disabled={quantity < 1}
+                disabled={loading || quantity < 1}
                 style={{
                   marginTop: 20,
                   padding: '10px 20px',
                   backgroundColor: '#ffc107',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: 'pointer',
-                  opacity: quantity < 1 ? 0.6 : 1,
+                  cursor: loading || quantity < 1 ? 'not-allowed' : 'pointer',
+                  opacity: loading || quantity < 1 ? 0.6 : 1,
                 }}
               >
-                Add to Cart
+                {loading ? 'Adding to Cart...' : 'Add to Cart'}
               </button>
             </div>
           </div>
