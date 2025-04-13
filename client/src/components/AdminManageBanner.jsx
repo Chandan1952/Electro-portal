@@ -9,7 +9,7 @@ const AdminManageBanner = () => {
 
   const fetchBanners = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/banners');
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/banners');
       const data = await res.json();
       setBanners(data);
       setLoading(false);
@@ -25,7 +25,7 @@ const AdminManageBanner = () => {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/banners/${id}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/api/banners/${id}`, {
         method: 'DELETE',
       });
       const result = await res.json();
@@ -44,7 +44,7 @@ const AdminManageBanner = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/banners/${editingBanner._id}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/api/banners/${editingBanner._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingBanner),
@@ -77,7 +77,7 @@ const AdminManageBanner = () => {
       <div style={styles.grid}>
         {banners.map((banner) => (
           <div key={banner._id} style={styles.card}>
-            <img src={`http://localhost:5000${banner.imageSrc}`} alt="Banner" style={styles.image} />
+            <img src={`https://electro-portal-backend.onrender.com${banner.imageSrc}`} alt="Banner" style={styles.image} />
             <h4>{banner.smallHeading}</h4>
             <h3>{banner.mainHeading}</h3>
             <p>{banner.discount}</p>
