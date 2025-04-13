@@ -8,7 +8,7 @@ const AdminManageAds = () => {
 
   const fetchAds = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/ads');
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/ads');
       const data = await res.json();
       setAds(data);
     } catch (err) {
@@ -27,7 +27,7 @@ const AdminManageAds = () => {
     if (!window.confirm('Are you sure you want to delete this ad?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/ads/${id}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/api/ads/${id}`, {
         method: 'DELETE',
       });
 
@@ -64,7 +64,7 @@ const AdminManageAds = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/ads/${editingAd._id}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/api/ads/${editingAd._id}`, {
         method: 'PUT',
         body: formData,
       });
@@ -121,7 +121,7 @@ const AdminManageAds = () => {
             </form>
           ) : (
             <div key={ad._id} style={styles.card}>
-              <img src={`http://localhost:5000${ad.img}`} alt="Ad" style={styles.image} />
+              <img src={`https://electro-portal-backend.onrender.com${ad.img}`} alt="Ad" style={styles.image} />
               <h4>{ad.heading}</h4>
               <p>{ad.sub}</p>
               <div style={styles.actions}>
