@@ -18,7 +18,7 @@ const AdminLogin = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:5000/admin-login", formData, { withCredentials: true });
+      const response = await axios.post("https://electro-portal-backend.onrender.com/admin-login", formData, { withCredentials: true });
 
       if (response.status === 200) {
         // Store token and admin email in localStorage
