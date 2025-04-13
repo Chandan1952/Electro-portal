@@ -17,7 +17,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`);
+        const res = await fetch(`https://electro-portal-backend.onrender.com/api/products/${id}`);
         const data = await res.json();
         setProduct(data);
       } catch (err) {
@@ -29,7 +29,7 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/cart/add', {
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/cart/add', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -89,7 +89,7 @@ const ProductDetailPage = () => {
             {/* Image */}
             <div>
               <img
-                src={`http://localhost:5000/${product.imageUrl || product.img}`}
+                src={`https://electro-portal-backend.onrender.com/${product.imageUrl || product.img}`}
                 alt={product.title}
                 style={{ width: 300, borderRadius: 10 }}
               />
