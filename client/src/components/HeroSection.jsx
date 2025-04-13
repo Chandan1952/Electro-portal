@@ -9,7 +9,7 @@ const Banner = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/banners');
+        const response = await fetch('https://electro-portal-backend.onrender.com/api/banners');
         const data = await response.json();
         setBanners(data);
       } catch (error) {
@@ -146,7 +146,7 @@ const Banner = () => {
       <div style={styles.imageWrapper}>
         <img
           style={styles.phoneImage}
-          src={`http://localhost:5000${imageSrc}`}
+          src={`https://electro-portal-backend.onrender.com${imageSrc}`}
           alt="Banner visual"
         />
       </div>
