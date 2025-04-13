@@ -32,7 +32,7 @@ const AdminPostBanner = () => {
     data.append('image', imageFile);
 
     try {
-      const response = await fetch('http://localhost:5000/api/banners', {
+      const response = await fetch('https://electro-portal-backend.onrender.com/api/banners', {
         method: 'POST',
         body: data,
       });
