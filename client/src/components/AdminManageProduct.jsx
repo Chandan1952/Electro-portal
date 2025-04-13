@@ -13,7 +13,7 @@ const AdminManageProduct = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('http://localhost:5000/products');
+      const res = await fetch('https://electro-portal-backend.onrender.com/products');
       const data = await res.json();
 
       const mergedProducts = [
@@ -33,7 +33,7 @@ const AdminManageProduct = () => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/products/${id}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/products/${id}`, {
         method: 'DELETE',
       });
 
@@ -81,7 +81,7 @@ const AdminManageProduct = () => {
       formData.append('category', editData.category);
       if (editImage) formData.append('img', editImage);
 
-      const res = await fetch(`http://localhost:5000/products/${editingId}`, {
+      const res = await fetch(`https://electro-portal-backend.onrender.com/products/${editingId}`, {
         method: 'PUT',
         body: formData,
       });
@@ -127,7 +127,7 @@ const AdminManageProduct = () => {
                       <img
                         src={
                           typeof editData.img === 'string'
-                            ? `http://localhost:5000/${editData.img}`
+                            ? `https://electro-portal-backend.onrender.com/${editData.img}`
                             : URL.createObjectURL(editImage)
                         }
                         alt="preview"
@@ -147,7 +147,7 @@ const AdminManageProduct = () => {
                 </tr>
               ) : (
                 <tr key={p._id}>
-                  <td><img src={`http://localhost:5000/${p.img}`} alt={p.name} style={styles.image} /></td>
+                  <td><img src={`https://electro-portal-backend.onrender.com/${p.img}`} alt={p.name} style={styles.image} /></td>
                   <td>{p.name}</td>
                   <td>${p.price}</td>
                   <td>${p.oldPrice}</td>
