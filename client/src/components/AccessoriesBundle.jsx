@@ -9,7 +9,7 @@ const AccessoriesBundle = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products");
+        const res = await fetch("https://electro-portal-backend.onrender.com/api/products");
         const data = await res.json();
 
         // Get 1 Featured product
@@ -59,7 +59,7 @@ const AccessoriesBundle = () => {
         {/* Main Product */}
         <div style={{ textAlign: "center" }}>
           <img
-            src={`http://localhost:5000/${mainProduct.imageUrl}`}
+            src={`https://electro-portal-backend.onrender.com/${mainProduct.imageUrl}`}
             alt={mainProduct.title}
             style={{ width: 120, marginBottom: 10 }}
           />
@@ -75,7 +75,7 @@ const AccessoriesBundle = () => {
           <React.Fragment key={acc._id}>
             <div style={{ textAlign: "center" }}>
               <img
-                src={`http://localhost:5000/${acc.imageUrl}`}
+                src={`https://electro-portal-backend.onrender.com/${acc.imageUrl}`}
                 alt={acc.title}
                 style={{ width: 120, marginBottom: 10 }}
               />
