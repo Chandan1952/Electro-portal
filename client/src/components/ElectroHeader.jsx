@@ -33,7 +33,7 @@ const ElectroHeader = () => {
 
   const fetchCartData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/cart', {
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/cart', {
         credentials: 'include',
       });
       const data = await res.json();
@@ -51,7 +51,7 @@ const ElectroHeader = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/user", {
+        const res = await axios.get("https://electro-portal-backend.onrender.com/api/user", {
           withCredentials: true,
         });
         setUser(res.data);
@@ -70,7 +70,7 @@ const ElectroHeader = () => {
   
 
   const handleLogout = async () => {
-    await axios.get('http://localhost:5000/logout', { withCredentials: true });
+    await axios.get('https://electro-portal-backend.onrender.com/logout', { withCredentials: true });
     setUser(null);
   };
 
