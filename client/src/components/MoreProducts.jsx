@@ -12,7 +12,7 @@ const MoreProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products");
+        const res = await fetch("https://electro-portal-backend.onrender.com/api/products");
         const data = await res.json();
 
         const grouped = {
@@ -75,7 +75,7 @@ const MoreProducts = () => {
               }}
             >
               <img
-                src={`http://localhost:5000/${product.imageUrl}`}
+                src={`https://electro-portal-backend.onrender.com/${product.imageUrl}`}
                 alt={product.title}
                 style={{
                   width: "100%",
