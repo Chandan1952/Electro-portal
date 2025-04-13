@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
-import axios from 'axios'; // You must install this
-
+import axios from 'axios'; // Ensure you have axios installed
 
 import {
   Heart,
@@ -33,13 +32,10 @@ const ElectroHeader = () => {
 
   const fetchCartData = async () => {
     try {
-      const res = await fetch('https://electro-portal-backend.onrender.com/api/cart', {
-        credentials: 'include',
-      });
-      const data = await res.json();
-      const totalPrice = data.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+      const res = await axios.get('https://electro-portal-backend.onrender.com/api/cart', { withCredentials: true });
+      const totalPrice = res.data.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
       setCart({
-        items: data.items,
+        items: res.data.items,
         total: totalPrice,
       });
     } catch (err) {
@@ -47,19 +43,22 @@ const ElectroHeader = () => {
     }
   };
 
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("https://electro-portal-backend.onrender.com/api/user", {
-          withCredentials: true,
-        });
+        const res = await axios.get("https://electro-portal-backend.onrender.com/api/user", { withCredentials: true });
+        console.log("User API response:", res.data);
         setUser(res.data);
       } catch (err) {
-        setUser(null);
+        const localUser = localStorage.getItem("user");
+        if (localUser) {
+          setUser(JSON.parse(localUser)); // Use fallback from localStorage
+        } else {
+          setUser(null);
+        }
       }
     };
-  
+    
     fetchUser();
   
     // Refetch every 5 seconds
@@ -67,11 +66,15 @@ const ElectroHeader = () => {
   
     return () => clearInterval(interval);
   }, []);
-  
 
   const handleLogout = async () => {
-    await axios.get('https://electro-portal-backend.onrender.com/logout', { withCredentials: true });
-    setUser(null);
+    try {
+      await axios.get('https://electro-portal-backend.onrender.com/logout', { withCredentials: true });
+      setUser(null);
+      localStorage.removeItem('user');
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
   };
 
   const styles = {
@@ -218,7 +221,6 @@ const ElectroHeader = () => {
     dropdownItemHover: {
       backgroundColor: '#f3f4f6',
     }
-        
   };
 
   // ✅ Dropdown component map
@@ -253,9 +255,6 @@ const ElectroHeader = () => {
         </div>
       </div>
     ) : null;
-
-
-
   };
 
   return (
@@ -279,7 +278,7 @@ const ElectroHeader = () => {
               </span>
               {userDropdown && (
                 <div style={styles.dropdown}>
-                  <Link to="/profile" style={{ ...styles.dropdownItem, textDecoration: "none", color: "#000" }}>My Account</Link>
+                  <Link to="/profile" style={{ ...styles.dropdownItem, textDecoration: "none", color: "#000" }}>Profile</Link>
                   <Link to="/orders" style={{ ...styles.dropdownItem, textDecoration: "none", color: "#000" }}>Orders</Link>
                   <div style={styles.dropdownItem} onClick={handleLogout}>Logout</div>
                 </div>
@@ -331,23 +330,17 @@ const ElectroHeader = () => {
               Home
             </Link>
           </li>
-          {[
-            "TV & Audio",
-            "Smart Phones",
-            "Laptops & Desktops",
-            "Gadgets",
-            "GPS & Car",
-            "Cameras & Accessories",
-          ].map((key) => (
-            <li
-              key={key}
-              style={styles.navItem}
-              onMouseEnter={() => setHoveredMenu(key)}
-              onMouseLeave={() => setHoveredMenu(null)}
-            >
-              <span>{key}</span> <ChevronDown size={16} />
-              {hoveredMenu === key && renderDropdown(key)}
-            </li>
+          {[ "TV & Audio", "Smart Phones", "Laptops & Desktops", "Gadgets", "GPS & Car", "Cameras & Accessories" ]
+            .map((key) => (
+              <li
+                key={key}
+                style={styles.navItem}
+                onMouseEnter={() => setHoveredMenu(key)}
+                onMouseLeave={() => setHoveredMenu(null)}
+              >
+                <span>{key}</span> <ChevronDown size={16} />
+                {hoveredMenu === key && renderDropdown(key)}
+              </li>
           ))}
         </ul>
       </nav>
