@@ -33,7 +33,7 @@ const AdminCreateProduct = () => {
     formData.append('image', imageFile);
 
     try {
-      const res = await fetch('http://localhost:5000/api/products', {
+      const res = await fetch('https://electro-portal-backend.onrender.com/api/products', {
         method: 'POST',
         body: formData
       });
