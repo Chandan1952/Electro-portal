@@ -101,7 +101,7 @@ const Tabs = () => {
                     title={product.title}
                     price={product.price}
                     originalPrice={product.originalPrice}
-                    image={`http://localhost:5000/${product.imageUrl}`}
+                    image={`https://electro-portal-backend.onrender.com/${product.imageUrl}`}
                   />
                 </Link>
               </div>
