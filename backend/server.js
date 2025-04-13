@@ -50,6 +50,8 @@ mongoose
 
 
 
+
+
 //********************REGISTRATION-AND-FORGET-PASSWORD-PAGE************************
 
 
@@ -82,12 +84,18 @@ app.post("/api/register", async (req, res) => {
     await newUser.save();
 
     req.session.userId = newUser._id;
-    res.status(201).json({ message: "User registered successfully." });
+
+    // ✅ Return userId so frontend can save to localStorage
+    res.status(201).json({
+      message: "User registered successfully.",
+      userId: newUser._id,
+    });
   } catch (err) {
     console.error("Registration error:", err);
     res.status(500).json({ message: "Internal server error." });
   }
 });
+
 
 
 
@@ -177,13 +185,18 @@ app.post("/api/login", async (req, res) => {
       username: user.username,
       email: user.email,
     };
-    res.status(200).json({ message: "Login successful." });
+    res.status(200).json({
+      message: "Login successful.",
+      user: req.session.user, // 👈 return it here
+    });
+    
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Internal server error." });
   }
 });
 
+// 🔹 GET USER DETAILS (Authenticated)
 app.get('/api/user', (req, res) => {
   if (req.session && req.session.user) {
     return res.json({
@@ -196,19 +209,7 @@ app.get('/api/user', (req, res) => {
 });
 
 
-// 🔹 GET USER DETAILS (Authenticated)
-// app.get("/api/user", async (req, res) => {
-//   if (!req.session.userId) return res.status(401).json({ error: "Unauthorized. Please log in." });
 
-//   try {
-//     const user = await User.findById(req.session.userId).select("-password");
-//     if (!user) return res.status(404).json({ error: "User not found." });
-
-//     res.json(user);
-//   } catch (err) {
-//     res.status(500).json({ error: "Error fetching user details." });
-//   }
-// });
 
 // 🟢 Check if User is Logged In
 app.get("/api/auth/check", (req, res) => {
@@ -259,17 +260,17 @@ app.put("/api/change-password", async (req, res) => {
 
 
 
-// Route to "User Logout" Page
-app.post("/logout", (req, res) => {
+app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ error: "Logout failed" });
+      console.error('Logout error:', err);
+      return res.status(500).json({ message: 'Logout failed' });
     }
-    // Clear the session cookie
-    res.clearCookie("connect.sid");
-    res.status(200).json({ message: "Logged out successfully" });
+    res.clearCookie('connect.sid'); // default cookie name for express-session
+    res.status(200).json({ message: 'Logged out successfully' });
   });
 });
+
 
 
 
@@ -796,7 +797,7 @@ app.delete('/products/:id', async (req, res) => {
 
 
 
-
+// Cart Item Schema
 const cartItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -808,6 +809,7 @@ const cartItemSchema = new mongoose.Schema({
   },
 });
 
+// Cart Schema
 const cartSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -818,63 +820,95 @@ const cartSchema = new mongoose.Schema({
   items: [cartItemSchema],
 });
 
-const Cart = mongoose.model('Cart', cartSchema)
+const Cart = mongoose.model('Cart', cartSchema);
 
 
-// Add to cart
-app.post('/api/cart/add', async (req, res) => {
-  const { userId, productId, quantity } = req.body;
-
-  if (!userId || !productId) {
-    return res.status(400).json({ message: 'userId and productId are required' });
-  }
-
+// Add to Cart API
+app.post("/api/cart/add", async (req, res) => {
   try {
+    // Check if user is logged in
+    if (!req.session.user || !req.session.user._id) {
+      return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    const userId = req.session.user._id;
+    const { productId, quantity } = req.body;
+
+    if (!productId || !quantity) {
+      return res.status(400).json({ message: "Product ID and quantity are required." });
+    }
+
+    // Check if productId is valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: "Invalid product ID." });
+    }
+
+    // Proceed with cart logic
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
       cart = new Cart({ userId, items: [] });
     }
 
-    const itemIndex = cart.items.findIndex((item) =>
-      item.productId.equals(productId)
+    // Check if product already exists in cart
+    const existingItem = cart.items.find(
+      (item) => item.productId === productId
     );
 
-    if (itemIndex > -1) {
-      cart.items[itemIndex].quantity += quantity || 1;
+    if (existingItem) {
+      existingItem.quantity += quantity; // Update quantity if product already in cart
     } else {
-      cart.items.push({ productId, quantity: quantity || 1 });
+      cart.items.push({ productId, quantity }); // Add new item if it's not in cart
     }
 
+    // Save the cart
     await cart.save();
-    res.status(200).json({ success: true, cart });
-  } catch (error) {
-    console.error('Add to cart error:', error);
-    res.status(500).json({ success: false, message: 'Failed to add to cart' });
+
+    // Fetch the updated cart with populated product details
+    const updatedCart = await Cart.findOne({ userId }).populate('items.productId');
+
+    res.status(200).json({ message: "Item added to cart", cart: updatedCart });
+  } catch (err) {
+    console.error("Add to cart error:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// Get user cart
-app.get('/api/cart/:userId', async (req, res) => {
+
+
+app.get('/api/cart', async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId }).populate('items.productId');
+    // Check if the user is logged in via session
+    if (!req.session.user || !req.session.user._id) {
+      return res.status(401).json({ message: 'User not logged in' });
+    }
+
+    // Fetch cart for the logged-in user and populate product details
+    const cart = await Cart.findOne({ userId: req.session.user._id }).populate('items.productId');
 
     if (!cart) {
       return res.status(200).json({ items: [], total: 0 });
     }
 
-    // Format cart items to match frontend expectations
-    const items = cart.items.map(item => ({
-      product: {
-        _id: item.productId._id,
-        title: item.productId.title,
-        price: item.productId.price,
-        imageUrl: item.productId.imageUrl,
-      },
-      quantity: item.quantity,
-    }));
+    // Format cart items and calculate total price
+    const items = cart.items.map((item) => {
+      if (item.productId) {
+        return {
+          product: {
+            _id: item.productId._id,
+            title: item.productId.title,
+            price: item.productId.price,
+            imageUrl: item.productId.imageUrl,
+          },
+          quantity: item.quantity,
+        };
+      } else {
+        console.error('Product missing for item', item);
+        return null; // If productId is missing, return null to filter later
+      }
+    }).filter(item => item !== null); // Filter out any null items
 
-    // Calculate total
+    // Calculate total price
     const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
     res.status(200).json({ items, total });
@@ -885,8 +919,51 @@ app.get('/api/cart/:userId', async (req, res) => {
 });
 
 
+// Cart Update API
+app.put("/api/cart/update", async (req, res) => {
+  try {
+    // Check if user is logged in
+    if (!req.session.user || !req.session.user._id) {
+      return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
 
+    const userId = req.session.user._id;
+    const { items } = req.body;
 
+    if (!items || !Array.isArray(items)) {
+      return res.status(400).json({ message: "Items are required to update the cart." });
+    }
+
+    // Find the user's cart
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found." });
+    }
+
+    // Update cart items
+    items.forEach((updatedItem) => {
+      const existingItem = cart.items.find(
+        (item) => item.productId === updatedItem.productId
+      );
+
+      if (existingItem) {
+        existingItem.quantity = updatedItem.quantity; // Update the quantity
+      } else {
+        cart.items.push({
+          productId: updatedItem.productId,
+          quantity: updatedItem.quantity,
+        }); // Add new item if not already in cart
+      }
+    });
+
+    await cart.save();
+    res.status(200).json({ message: "Cart updated successfully.", cart });
+  } catch (err) {
+    console.error("Update cart error:", err);
+    res.status(500).json({ message: "Internal server error." });
+  }
+});
 
 
 
