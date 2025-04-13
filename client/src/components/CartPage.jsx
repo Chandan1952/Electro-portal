@@ -64,63 +64,63 @@ const CartPage = () => {
 
   return (
     <div>
-            <ElectroHeader />
-      
-    <div style={styles.container}>
-      <h2 style={styles.title}>Cart</h2>
+      <ElectroHeader />
+      <div style={styles.container}>
+        <h2 style={styles.title}>Cart</h2>
 
-      {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <>
-          {cartItems.map((item, index) => (
-            <div key={item.product._id} style={styles.cartItem}>
-              <div style={styles.productInfo}>
-                <img
-                  src={`https://electro-portal-backend.onrender.com/${item.product.imageUrl || item.product.img}`}
-                  alt={item.product.title}
-                  style={styles.image}
-                />
-                <div>
-                  <div style={styles.productName}>{item.product.title}</div>
-                  <div><strong>Vendor:</strong> {item.product.vendor || 'Unknown'}</div>
+        {cartItems.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          <>
+            {cartItems.map((item, index) => (
+              <div key={item.product._id} style={styles.cartItem}>
+                <div style={styles.productInfo}>
+                  <img
+                    src={`https://electro-portal-backend.onrender.com/${item.product.imageUrl || item.product.img}`}
+                    alt={item.product.title}
+                    style={styles.image}
+                  />
+                  <div>
+                    <div style={styles.productName}>{item.product.title}</div>
+                    <div><strong>Vendor:</strong> {item.product.vendor || 'Unknown'}</div>
+                  </div>
                 </div>
+                <div style={styles.price}>${item.product.price.toFixed(2)}</div>
+                <input
+                  type="number"
+                  min="1"
+                  value={item.quantity}
+                  onChange={(e) => handleQuantityChange(index, e.target.value)}
+                  style={styles.qtyInput}
+                />
+                <div style={styles.price}>${(item.product.price * item.quantity).toFixed(2)}</div>
               </div>
-              <div style={styles.price}>${item.product.price.toFixed(2)}</div>
-              <input
-                type="number"
-                min="1"
-                value={item.quantity}
-                onChange={(e) => handleQuantityChange(index, e.target.value)}
-                style={styles.qtyInput}
-              />
-              <div style={styles.price}>${(item.product.price * item.quantity).toFixed(2)}</div>
+            ))}
+
+            <div style={styles.actions}>
+              <input type="text" placeholder="Coupon code" style={styles.couponInput} />
+              <button style={styles.applyBtn}>Apply coupon</button>
+              <button style={styles.updateBtn} onClick={handleUpdateCart}>Update cart</button>
+              <button style={styles.checkoutBtn}>Proceed to checkout</button>
             </div>
-          ))}
 
-          <div style={styles.actions}>
-            <input type="text" placeholder="Coupon code" style={styles.couponInput} />
-            <button style={styles.applyBtn}>Apply coupon</button>
-            <button style={styles.updateBtn} onClick={handleUpdateCart}>Update cart</button>
-            <button style={styles.checkoutBtn}>Proceed to checkout</button>
-          </div>
-
-          <div style={styles.summary}>
-            <h3>Cart totals</h3>
-            <p><strong>Subtotal:</strong> ${subtotal.toFixed(2)}</p>
-            <p><strong>Shipping:</strong> Flat rate: ${shippingCost.toFixed(2)}</p>
-            <p>Shipping to <strong>CA.</strong> <a href="#">Change address</a></p>
-            <h4>Total: <strong>${total.toFixed(2)}</strong></h4>
-          </div>
-        </>
-      )}
+            <div style={styles.summary}>
+              <h3>Cart totals</h3>
+              <p><strong>Subtotal:</strong> ${subtotal.toFixed(2)}</p>
+              <p><strong>Shipping:</strong> Flat rate: ${shippingCost.toFixed(2)}</p>
+              <p>Shipping to <strong>CA.</strong> <a href="#">Change address</a></p>
+              <h4>Total: <strong>${total.toFixed(2)}</strong></h4>
+            </div>
+          </>
+        )}
+      </div>
+      <MainBanner />
+      <ProductHighlightsSection />
+      <ElectroFooterPage />
     </div>
-          <MainBanner />
-          <ProductHighlightsSection />
-          <ElectroFooterPage />
-        </div>
   );
 };
+
 
 const styles = {
   container: {
