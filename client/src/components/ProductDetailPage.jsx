@@ -20,7 +20,7 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true); // Set loading to true when fetching the product
-        const res = await fetch(`http://localhost:5000/api/products/${id}`);
+        const res = await fetch(`https://electro-portal-backend.onrender.com/api/products/${id}`);
         const data = await res.json();
         setProduct(data);
         setLoading(false); // Set loading to false when data is fetched
